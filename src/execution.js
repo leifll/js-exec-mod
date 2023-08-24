@@ -32,7 +32,7 @@
 //    means of shared memory, which means that they belong to the same Agent Cluster.
 
 // An 'agent record' is a set of properties, used by the Agent in order to store some
-// information about the itself, for example whether it can block the executing thread.It's
+// information about itself, for example whether it can block the executing thread.It's
 // an abstraction used in the spec, it doesn't have to be implemented in reality.
 // See table 29 in the spec, https://tc39.es/ecma262/#table-agent-record.
 
@@ -72,7 +72,7 @@
 // Summary of 'job' (not from the web page above, since the spec has been changed since
 // that page was written):
 // 1. The Job’s code is executed by a certain executing thread, in a particular agent.
-// 2. Jobs are scheduled for execution by ECMAScript 'host environments' in a the agent that
+// 2. Jobs are scheduled for execution by ECMAScript 'host environments' in the agent that
 //    owns the 'realm' specified when scheduling the job. Bullet 3 below explains how jobs
 //    are scheduled.
 // 3. The spec defines the 'host hooks' HostEnqueueGenericJob,
@@ -86,8 +86,12 @@
 //    be executed. Note that the job executes by pushing an execution context.
 
 // An 'environment record' (9.1) represents the association of identifiers to specific variables
-// and functions. Usually an Environment Record is associated with some specific structure
-// such as a function declaration or a block statement.
+// and functions. Usually an 'environment record' is associated with some specific structure
+// such as a function declaration or a block statement. Every 'environment record' has an
+// [[OuterEnv]] field, which is either null or a reference to an outer 'environment record'.
+// 'Environment record's are purely specification mechanisms and need not correspond to any
+// specific artefact of an ECMAScript implementation. It is impossible for an ECMAScript program
+// to directly access or manipulate such values.
 
 // An 'execution context stack' (9.4) is a stack collecting 'execution context's. The 'running
 // execution context' is always at the top of the stack.
@@ -119,11 +123,20 @@
 // 3. 'ScriptOrModule' contains information about the script or module from which the code
 //     being executed originates, or null if the code doesn't originate from a script or module.
 // 4. 'Realm' is the 'realm record' (explained below) from which the code accesses resources.
+// 5. 'LexicalEnvironment' identifies the 'environment record' used to resolve identifier
+//     references made by code within this 'execution context'.
+// 6. 'VariableEnvironment' identifies the 'environment record' that holds bindings created by
+//     VariableStatements within this execution context.
+// 7. 'PrivateEnvironment' identifies the 'PrivateEnvironment record' that holds Private Names
+//     created by ClassElements in the nearest containing class. null if there is no containing
+//     class.
 
-// A 'realm' (9.3) is 
+// A 'realm' (9.3) consists of a set of intrinsic objects, an ECMAScript global environment,
+// all of the ECMAScript code that is loaded within the scope of that global environment,
+// and other associated state and resources. When an 'execution context' is created, a new 'realm'
+// is not created for it. Instead, an already existing 'realm' is associated with the newly created
+// 'execution context'. This means that, since the same 'realm' is shared between different
+// 'execution contexts', all 'execution context's share the same global environment, and can see
+// each other's updates of the global environment.
 
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
-
-// https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick#what-is-the-event-loop
-
-// https://stackoverflow.com/questions/17542740/is-it-accurate-to-say-javascript-is-a-single-thread-language
+// A 'realm record' is a collection of a 'realm's content.
