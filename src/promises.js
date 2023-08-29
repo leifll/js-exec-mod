@@ -98,7 +98,7 @@
 //    e. Return the promise created in bullet a.
 
 // In brief, all of the above can be summarized as follows: Code is executed sequentially
-// from top to bottom, but all calls to resolve or reject in a promise constructor or in a
+// from top to bottom, but all calls to resolve or reject in a promise constructor or to
 // then/catch/finally are enqueued and executed when the execution context stack is empty.
 
 // When looking at examples below, remember thst the following are all the same:
@@ -106,24 +106,28 @@
 // (x) => {return x*2}
 // function myFunc(x) {return x*2}
 console.log('ex 1, printout 1');
-const promiseOlle = new Promise((resolve, reject) => {
+const promiseOuter = new Promise((resolveOuter, rejectOuter) => {
   console.log('ex 1, printout 2');
-  const promiseStina = new Promise((resolve, reject) => {
+  const promiseInner = new Promise((resolveInner, rejectInner) => {
     console.log('ex 1, printout 3');
-    resolve('from promise stina');
+    resolveInner('from inner promise');
   });
-  promiseStina.then((result) => {
+  promiseInner.then((result) => {
     console.log('ex 1, printout 6');
     console.log(result);
-    return result;
+  //   return result;
+  // }).then((result) => {
+  //   console.log('ex 1, printout 6b');
+  //   console.log(result);
+  //   return result;
   }).then((result) => {
     console.log('ex 1, printout 7');
     console.log(result);
-    resolve(result);
+    resolveOuter(result);
   });
   console.log('ex 1, printout 4');
 });
-promiseOlle.then((result) => {
+promiseOuter.then((result) => {
   console.log('ex 1, printout 8');
   console.log(result);
   return result;
@@ -133,11 +137,56 @@ promiseOlle.then((result) => {
 });
 console.log('ex 1, printout 5');
 
-// EXAMPLE OF BULLETS 1-5
+// Useful static methods in Promise follow below.
 
-//KOLLA OCKSÅ PÅ FUNKTIONERNA ALL, ANY, RESOLVE OSV
+// Promise.all takes an iterable of promises as input and returns a single Promise.
+// This returned promise fulfills when all of the input's promises fulfill, with an
+// array of the fulfillment values. It rejects when any of the input's promises reject,
+// with this first rejection reason.
+Promise.all([
+  new Promise((resolve, reject) => resolve('ex 2, from first')),
+  new Promise((resolve, reject) => resolve('ex 2, from second')),
+  new Promise((resolve, reject) => resolve('ex 2, from third')),
+]).then((result) => result.forEach((val) => console.log(val)));
 
+// Promise.allSettled takes an iterable of promises as input and returns a single Promise.
+// This returned promise fulfills when all of the input's promises settle, with an
+// array of objects that describe the outcome of each promise.
+Promise.allSettled([
+  new Promise((resolve, reject) => resolve('ex 3, from first')),
+  new Promise((resolve, reject) => reject(new Error('ex 3, from second'))),
+  new Promise((resolve, reject) => resolve('ex 3, from third')),
+]).then((result) => result.forEach((val) => console.log(val)));
+
+// Promise.any takes an iterable of promises as input and returns a single Promise.
+// This returned promise fulfills when any of the input's promises fulfill, with
+// this first fulfillment value. It rejects when all of the input's promises reject),
+// with an AggregateError containing an array of rejection reasons.
+Promise.any([
+  new Promise((resolve, reject) => resolve('ex 4, from first')),
+  new Promise((resolve, reject) => resolve('ex 4, from second')),
+  new Promise((resolve, reject) => resolve('ex 4, from third')),
+]).then((result) => console.log(result));
+
+// Promise.race takes an iterable of promises as input and returns a single Promise.
+// This returned promise settles with the eventual state of the first promise that settles.
+
+// Promise.reject returns a new Promise object that is rejected with the given reason.
+
+// Promise.resolve returns a Promise object that is resolved with the given value. If the
+// value is a thenable (i.e. has a then method), the returned promise will "follow" that thenable,
+// adopting its eventual state; otherwise, the returned promise will be fulfilled with the value.
+// Generally, if you don't know if a value is a promise or not, Promise.resolve(value) it instead
+// and work with the return value as a promise.
+Promise.resolve(
+    new Promise((resolve, reject) => resolve('ex5 printout 1'))
+).then((result) => console.log(result));
+Promise.resolve('ex5 printout 2').then((result) => console.log(result));
+
+// As can perhaps be seen in the output, printouts that are unrelated seem to appear
+// in the wrong order. Can it be that the implementation is allowed to change execution order
+// of statements as long as it doesn't violate the spec? That's allowed in Java by the Java spec.
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
 
-// https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick#what-is-the-event-loop// https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick#what-is-the-event-loop
+// https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick#what-is-the-event-loop
