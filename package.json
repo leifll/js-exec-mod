@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/execution.js",
-    "exec": "node src/execution.js"
+    "exec": "node src/execution.js",
+    "prom": "node src/promises.js"
   },
   "repository": {
     "type": "git",
