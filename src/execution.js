@@ -2,6 +2,11 @@
 
 // Chapter 9 in the spec, https://tc39.es/ecma262/
 
+// See https://stackoverflow.com/questions/17542740/is-it-accurate-to-say-javascript-is-a-single-thread-language
+// The spec can be said to define ECMA script as single-threaded, since there's no mentioning at all
+// about any thread-related issues. In particular, the event loop isn't mentioned in any way.
+// Also, nothing is said about thread safety, concurrency, mutex, deadlock or anything of the kind.
+
 // https://medium.com/@g.smellyshovel/the-ecmascript-executable-code-and-execution-contexts-chapter-explained-fa6e098e230f
 
 // https://www.plectica.com/maps/C7Z4HYSNU

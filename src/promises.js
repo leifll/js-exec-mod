@@ -52,7 +52,7 @@
 // The way promises work is specified in the Promise abstract operations defined in
 // sections 27.2.1-27.2.5. It is also explained (but not defined), in plain text,
 // in the following pages:
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Promise
 
@@ -80,7 +80,8 @@
 //    JS Host. The resolve function will create and enqueue a new Job, that either returns
 //    it's argument if the argument isn't a promise, or executes it's argument if the argument
 //    is a promise. (27.2.3.1, 27.2.1.3, 27.2.1.3.2)
-// 5. The 'then' function in the promise prototype performs the following steps:
+// 5. The 'then' function in the promise prototype performs the following
+//    steps (27.2.5.4, 27.2.5.4.1):
 //    a. Creates a new PromiseCapability Record with a promise that doesn't do anything. Remember
 //       bullet 4 above, the resolve and reject functions of this PromiseCapability are the
 //       generated functions described there.
@@ -115,11 +116,11 @@ const promiseOuter = new Promise((resolveOuter, rejectOuter) => {
   promiseInner.then((result) => {
     console.log('ex 1, printout 6');
     console.log(result);
-  //   return result;
-  // }).then((result) => {
-  //   console.log('ex 1, printout 6b');
-  //   console.log(result);
-  //   return result;
+    return result;
+    // }).then((result) => {
+    //   console.log('ex 1, printout 6b');
+    //   console.log(result);
+    // return result;
   }).then((result) => {
     console.log('ex 1, printout 7');
     console.log(result);
@@ -136,6 +137,13 @@ promiseOuter.then((result) => {
   console.log(result);
 });
 console.log('ex 1, printout 5');
+
+// Passing a function to then.
+const resultFunc = (result) => {
+  console.log('ex 1b, printout 1');
+  console.log(result);
+};
+Promise.resolve('ex 1b, printout 2').then(resultFunc);
 
 // Useful static methods in Promise follow below.
 
@@ -181,12 +189,12 @@ Promise.any([
 Promise.resolve(
     new Promise((resolve, reject) => resolve('ex5 printout 1'))
 ).then((result) => console.log(result));
+
 Promise.resolve('ex5 printout 2').then((result) => console.log(result));
+
+const resolveFunc = () => 'never printed';
+Promise.resolve(resolveFunc).then((result) => console.log(result));
 
 // As can perhaps be seen in the output, printouts that are unrelated seem to appear
 // in the wrong order. Can it be that the implementation is allowed to change execution order
 // of statements as long as it doesn't violate the spec? That's allowed in Java by the Java spec.
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
-
-// https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick#what-is-the-event-loop

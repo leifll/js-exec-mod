@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/execution.js",
     "exec": "node src/execution.js",
+    "asaw": "node src/async-await.js",
     "prom": "node src/promises.js"
   },
   "repository": {
