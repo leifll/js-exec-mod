@@ -1,2 +1,2 @@
 # js-obj-mod
-Examples that illustrate the JS thread model
+Examples that illustrate the ECMA execution model
