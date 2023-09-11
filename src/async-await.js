@@ -169,8 +169,3 @@ const concurrent2 = async () => {
 };
 
 concurrent2(); // after 1 second, logs 'fast', then after 1 more second, 'slow'
-
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
-
-// https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick#what-is-the-event-loop

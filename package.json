@@ -7,7 +7,8 @@
     "start": "node src/execution.js",
     "exec": "node src/execution.js",
     "asaw": "node src/async-await.js",
-    "prom": "node src/promises.js"
+    "prom": "node src/promises.js",
+    "ev-loop": "node src/event-loop.js"
   },
   "repository": {
     "type": "git",
